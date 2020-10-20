@@ -26,6 +26,22 @@
 	  (insert (pollen--tag-content tag)))
       (signal 'scan-error '("No surrounding tag")))))
 
+(ert-deftest pollen--delete-surrounding-tag-test ()
+  (let ((texts
+	 '(("◊tag{conten|ts}" "conten|ts")
+	   ("◊tag{more ◊tagged{con|tents} inside}" "◊tag{more con|tents inside}")
+	   ("◊tag{m|ore ◊tagged{contents} inside}" "m|ore ◊tagged{contents} inside")
+	   ("◊tag{more ◊tagged{contents} i|nside}" "more ◊tagged{contents} i|nside" )
+	   ;; TODO: Test errors
+	   ;; ("◊ta|g{contents}" )
+	   ;; ("◊ta|g{contents")
+	   )))
+    (--each texts
+      (point-test-edit (car it)
+		       (cadr it)
+		       'pollen-delete-surrounding-tag)
+      )))
+
 (defun pollen-mark-surrounding-content ()
   "Mark the content of the surrounding tag"
   (interactive)
@@ -57,20 +73,37 @@
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
 	(progn
-	    (push-mark (pollen--tag-closing-brace tag) nil)
-	    (kill-region (point) (pollen--tag-content-end tag))
-	    (goto-char (mark))
-	    (insert (format "\n◊%s{%s}" (pollen--tag-name tag)
-			    (s-trim (pop kill-ring))))
-	    (pop-mark)))
-    (signal 'scan-error '("The point is not within a tag.  Unable to split."))
+	  (push-mark (pollen--tag-closing-brace tag) nil)
+	  (kill-region (point) (pollen--tag-content-end tag))
+	  (goto-char (mark))
+	  (insert (format "\n◊%s{%s}" (pollen--tag-name tag)
+			  (s-trim (pop kill-ring))))
+	  (goto-char (+ 1 (mark) ))
+	  (pop-mark))
+      (signal 'scan-error '("The point is not within a tag.  Unable to split.")))
     ))
+
+(ert-deftest pollen--split-test ()
+  (let ((texts
+	 '(("◊tag{conten|ts}" "◊tag{conten}\n|◊tag{ts}")
+	   ("◊tag{more ◊tagged{con|tents} inside}" "◊tag{more ◊tagged{con}\n|◊tagged{tents} inside}")
+	   ("◊tag{m|ore ◊tagged{contents} inside}" "◊tag{m}\n|◊tag{ore ◊tagged{contents} inside}")
+	   ("◊tag{more ◊tagged{contents} i|nside}" "◊tag{more ◊tagged{contents} i}\n|◊tag{nside}")
+	   ;; TODO: Test errors
+	   ;; ("◊ta|g{contents}" )
+	   ;; ("◊ta|g{contents")
+	   )))
+    (--each texts
+      (point-test-edit (car it)
+		       (cadr it)
+		       'pollen-split))))
 
 (defun pollen-join ()
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
-	(let ((text-and-next-tag
+	(let ((origin (point))
+	      (text-and-next-tag
 	       (save-excursion
 		 ;; Move the point just after the closing brace
 		 (goto-char (pollen--tag-closing-brace tag))
@@ -98,15 +131,31 @@
 		      (goto-char (cdr (pollen--tag-content-bounds tag)))
 		      (insert " ")
 		      (insert (pollen--tag-content next-tag))
-		      )
+		      (goto-char origin))
 		  (signal 'scan-error `(,(format "There is text between this tag and the next [%s].  Unable to join."
 						 (s-trim text))))
 		  ))
 	    (signal 'scan-error '("There is no tag following this one.  Unable to join."))))
-      (signal 'scan-error '("The point is not within a tag.  Unable to join.")))
-    ))
+      (signal 'scan-error '("The point is not within a tag.  Unable to join.")))))
+
+(ert-deftest pollen--join-test ()
+  (let ((texts
+	 '(("◊tag{ha|s}◊tag{contents}" "◊tag{ha|s contents}")
+	 '("◊tag{ha|s}  ◊tag{contents}" "◊tag{ha|s contents}")
+	 '("◊tag{ha|s}\n◊tag{contents}" "◊tag{ha|s contents}")
+	   ;; TODO: Test errors
+	   ;; ("◊ta|g{contents}" )
+	   ;; ("◊ta|g{contents")
+	 ;; ("◊tag{ha|s}more◊tag{contents}")
+	   )))
+    (--each texts
+      (point-test-edit (car it)
+		       (cadr it)
+		       'pollen-join))))
 
 (define-key pollen-markup-mode-map (kbd "C-c j") 'pollen-join)
 (define-key pollen-markup-mode-map (kbd "C-c s") 'pollen-split)
 (define-key pollen-markup-mode-map (kbd "C-c c") 'pollen-change-surrounding-tag-name)
 (define-key pollen-markup-mode-map (kbd "C-c d") 'pollen-delete-surrounding-tag)
+
+;; Redefine thing at point to work with lozenge-openbrace

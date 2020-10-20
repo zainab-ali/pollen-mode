@@ -30,7 +30,6 @@
 
 (defun pollen--tag-closing-brace (tag)
   "The position after the closing brace }"
-  (message "%s" (cdr (pollen--tag-content-bounds tag) ))
   (+ (pollen--tag-content-end tag) 1))
 
 (defun pollen--tag-before-point ()

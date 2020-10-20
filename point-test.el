@@ -61,12 +61,10 @@ Verify that it is at | in the END-MARKED-TEXT."
 	 (with-temp-buffer
 	   (insert start-text)
 	   (goto-char start-point)
-	   (message "Start point is" (buffer-substring-no-properties (point-min)
-						       (point)))
 	   (funcall function)
 	   (let ((text (buffer-substring-no-properties (point-min)
 						       (point-max)))) 
-	     (unless (equal text end-text)
+	     (unless (and (equal text end-text) (equal (point) end-point))
 	       (ert-fail
 		(s-join "\n"
 			(list
