@@ -41,7 +41,7 @@
   "Pollen mode keywords")
 
 ;; (setq font-lock-defaults (list (git-rebase-mode-font-lock-keywords) t t))
-(font-lock-add-keywords 'pollen-markup-mode pollen-font-lock-keywords)
+;; (font-lock-add-keywords 'pollen-markup-mode pollen-font-lock-keywords)
 
 
 (define-skeleton pollen-skeleton-command
@@ -98,6 +98,6 @@
   :abbrev-table pollen-markup-mode-abbrev-table
   :after-hook (font-lock-ensure)
   :keymap pollen-markup-mode-map
-  (setq font-lock-defaults (list (git-rebase-mode-font-lock-keywords) nil t)))
+  (setq font-lock-defaults (list pollen-font-lock-keywords nil t)))
 
 (provide 'pollen-markup-mode)
