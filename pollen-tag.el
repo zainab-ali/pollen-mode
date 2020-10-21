@@ -1,3 +1,7 @@
+(require 'rx)
+(require 'dash)
+(require 'pollen-thing)
+
 (defstruct pollen--tag
   (name)
   (name-bounds)
@@ -89,7 +93,7 @@
       ))
   )
 
-(ert-deftest pollen--tag-before-point ()
+(ert-deftest pollen--tag-before-point-test ()
   (let ((texts
 	 '(("◊tag{conten|ts}" "tag" "contents")
 	   ("◊tag{|contents}" "tag" "contents")
@@ -115,7 +119,7 @@
 					   (pollen--tag-content tag)))
 				       'pollen--tag-content-before-point)))))
 
-(ert-deftest pollen--tag-surrounding-point ()
+(ert-deftest pollen--tag-surrounding-point-test ()
   (let ((texts
 	 '(("◊tag{conten|ts}" "tag" "contents")
 	   ("◊tag{|contents}" "tag" "contents")
@@ -180,5 +184,4 @@
 				       (lambda () (thing-at-point 'pollen-tag))
 				       'pollen--tag-at-point)))))
 
-
-;; TODO: Should ert tests end with test?
+(provide 'pollen-tag)

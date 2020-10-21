@@ -1,3 +1,6 @@
+(require 'dash)
+(require 'pollen-tag)
+
 (defun pollen-change-tag-name (next)
   (interactive "s")
   (pcase-let ((`(,start . ,end) (bounds-of-thing-at-point 'pollen-tag)))
@@ -143,7 +146,4 @@
 		       (cadr it)
 		       'pollen-join))))
 
-(define-key pollen-markup-mode-map (kbd "C-c j") 'pollen-join)
-(define-key pollen-markup-mode-map (kbd "C-c s") 'pollen-split)
-(define-key pollen-markup-mode-map (kbd "C-c c") 'pollen-change-surrounding-tag-name)
-(define-key pollen-markup-mode-map (kbd "C-c d") 'pollen-delete-surrounding-tag)
+(provide 'pollen-edit)

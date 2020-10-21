@@ -1,11 +1,11 @@
 ;; Utils for testing the point
 
 ;; Point insertion
-(defun insert-point-start () (interactive) (insert "①"))
-(defun insert-point-end () (interactive) (insert "②"))
+;; (defun insert-point-start () (interactive) (insert "①"))
+;; (defun insert-point-end () (interactive) (insert "②"))
 
-(local-set-key (kbd "C-c 1") 'insert-point-start)
-(local-set-key (kbd "C-c 2") 'insert-point-end)
+;; (local-set-key (kbd "C-c 1") 'insert-point-start)
+;; (local-set-key (kbd "C-c 2") 'insert-point-end)
 
 (defun point-test-motion (marked-text function &optional lambda-name)
   "Verifies that calling FUNCTION moves the point from ① to ② within the MARKED-TEXT.

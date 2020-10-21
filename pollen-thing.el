@@ -1,3 +1,6 @@
+(require 'rx)
+(require 'dash)
+
 (defconst pollen-lozenge-rx "◊")
 
 (defun forward-pollen-tag (arg)
@@ -57,7 +60,7 @@ If ARG is negative, this moves the point backward to the beginning of the tag.
 				"{"))
 		       nil t arg) ))
 
-(ert-deftest forward-pollen-tag-forwards ()
+(ert-deftest forward-pollen-tag-forwards-test ()
   "`(forward-thing 'pollen-tag 1)' should move the point correctly."
   (let ((texts
 	 '("The poi①nt ◊should{②move here} if there's no tag before it"
@@ -70,7 +73,7 @@ If ARG is negative, this moves the point backward to the beginning of the tag.
 					  (forward-thing 'pollen-tag 1))
 				     'forward-pollen-tag-forwards))))
 
-(ert-deftest forward-pollen-tag-backwards ()
+(ert-deftest forward-pollen-tag-backwards-test ()
   "`(forward-thing 'pollen-tag -1)' should move the point correctly."
   (let ((texts
 	 '("The point ②◊should{move here} if th①ere's no tag after it"
@@ -88,3 +91,5 @@ If ARG is negative, this moves the point backward to the beginning of the tag.
     (when-let* ((back (looking-back regex-back))
 		(match-beginning (match-beginning 0)))
       (cons match-beginning match-end))))
+
+(provide 'pollen-thing)
