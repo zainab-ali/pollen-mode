@@ -6,17 +6,17 @@
 (require 'pollen-edit)
 
 (defvar pollen-abbrevs
-  '(("pp"  . 'p)
-    ("ph"  . 'headline2)
-    ("pn"  . 'note)
-    ("pk"  . 'keyword)
-    ("pd"  . 'definition)
-    ("pb"  . 'buffer)
-    ("pc"  . 'command)
-    ("pci"  . 'code-inline)
-    ("pf"  . 'function)
-    ("pky"  . 'key)
-    ("pkb"  . 'keybinding))
+  '(("pp"  . p)
+    ("ph"  . headline2)
+    ("pn"  . note)
+    ("pk"  . keyword)
+    ("pd"  . definition)
+    ("pb"  . buffer)
+    ("pc"  . command)
+    ("pci"  . code-inline)
+    ("pf"  . function)
+    ("pky"  . key)
+    ("pkb"  . keybinding))
   "Tagnames")
 
 (defconst pollen-font-lock-keywords
@@ -68,8 +68,9 @@
 
 (define-abbrev-table 'pollen-markup-mode-abbrev-table
   (cons
-   ("psc" "" pollen-skeleton-command)
+   (list "psc" "" 'pollen-skeleton-command)
    (--each pollen-abbrevs (pollen--skeleton-abbrev (car it) (cdr it)))))
+
 
 (defvar pollen-markup-mode-map
   (let ((map (make-sparse-keymap)))
