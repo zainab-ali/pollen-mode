@@ -12,9 +12,12 @@
   "Surrounds selected region with a pollen tag"
   (interactive "r\ns")
   (goto-char end)
-  (insert "}")
+  (push-mark (point))
   (goto-char start)
   (insert (format "◊%s{" next))
+  (goto-char (mark))
+  (insert "}")
+  (pop-mark)
   )
 
 (defun pollen-delete-surrounding-tag ()
