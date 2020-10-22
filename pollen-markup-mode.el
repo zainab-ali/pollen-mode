@@ -78,6 +78,7 @@
     (define-key map (kbd "C-c s") 'pollen-split)
     (define-key map (kbd "C-c c") 'pollen-change-surrounding-tag-name)
     (define-key map (kbd "C-c d") 'pollen-delete-surrounding-tag)
+    (define-key map (kbd "C-c ]") 'pollen-up-tag)
     map)
   "Keymap for pollen-markup-mode")
 

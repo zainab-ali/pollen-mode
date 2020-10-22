@@ -149,4 +149,14 @@
 		       (cadr it)
 		       'pollen-join))))
 
+(defun pollen-up-tag ()
+  "Moves out of the current tag, after the closing brace"
+  (interactive)
+  (let ((tag (pollen--tag-surrounding-point)))
+   (if tag
+       (goto-char (pollen--tag-closing-brace tag))
+       (signal 'scan-error
+	       '("The point is not within a tag.  Unable to move up."))
+       )))
+
 (provide 'pollen-edit)
