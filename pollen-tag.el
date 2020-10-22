@@ -88,7 +88,6 @@
 	tag
       ;; If not, move before the tag and look again.
       (goto-char (pollen--tag-lozenge tag))
-      (message "The point is at %s" (point-test--around (point)))
       (pollen--tag-surrounding-point-go origin)
       ))
   )
