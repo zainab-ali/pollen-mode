@@ -2,7 +2,7 @@
 (require 'dash)
 (require 'pollen-thing)
 
-(defstruct pollen--tag
+(cl-defstruct pollen--tag
   (name)
   (name-bounds)
   (content)

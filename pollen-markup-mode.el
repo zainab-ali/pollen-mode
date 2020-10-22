@@ -62,7 +62,7 @@
   "Creates an entry for the abbrev table"
   (let ((command (intern (concat "pollen-skeleton-command-" (symbol-name tag-name)))))
     (fset command (lambda ()
-		    (pollen-skeleton-command tag-name)))
+		    (pollen-skeleton-command (symbol-name tag-name))))
     (put command 'no-self-insert t)
     (list abbrev "" command)))
 
