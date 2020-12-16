@@ -1,9 +1,13 @@
 ;;; -*- lexical-binding: t; -*-
+;; Lexical binding is described in Info node `(elisp) Lexical Binding'
+
 (require 'rx)
+
 (require 'skeleton)
 (require 'dash)
 (require 'pollen-server)
 (require 'pollen-edit)
+(require 'pollen-face)
 
 (defvar pollen-abbrevs
   '(("pp"  . p)
@@ -19,31 +23,6 @@
     ("pkb"  . keybinding))
   "Tagnames")
 
-(defconst pollen-font-lock-keywords
-  (eval-when-compile
-    ;; #lang
-    `(
-      (,(rx (group (group "#lang")
-                   (1+ " ")
-                   (group (1+ not-newline))))
-       (2 font-lock-keyword-face nil t)
-       (3 font-lock-variable-name-face nil t))
-      (,(rx (group (group "◊")
-		   (group (1+ (or word (syntax symbol))))
-		   (group "{")
-		   (group (1+ (not (any ?{ ?◊ ?}))))))
-       (2 font-lock-keyword-face nil t)
-       (3 font-lock-variable-name-face nil t)
-       (5 font-lock-string-face nil t))
-      (,(rx (group (1+ word)))
-       (1 font-lock-string-face nil t))
-      ))
-  "Pollen mode keywords")
-
-;; (setq font-lock-defaults (list (git-rebase-mode-font-lock-keywords) t t))
-;; (font-lock-add-keywords 'pollen-markup-mode pollen-font-lock-keywords)
-
-
 (define-skeleton pollen-skeleton-command
   "Pollen command"
   "Tag: "
@@ -51,11 +30,11 @@
 
 (defmacro pollen-skeleton-tag (tag)
   `(progn
-   (defun ,(intern (concat "pollen-skeleton-command-" tag)) ()
-      (pollen-skeleton-command ,tag)
-      )
-   (put (quote ,(intern (concat "pollen-skeleton-command-" tag)))  'no-self-insert t)
-   )
+     (defun ,(intern (concat "pollen-skeleton-command-" tag)) ()
+       (pollen-skeleton-command ,tag)
+       )
+     (put (quote ,(intern (concat "pollen-skeleton-command-" tag)))  'no-self-insert t)
+     )
   )
 
 (defun pollen--skeleton-abbrev (abbrev tag-name)
@@ -85,6 +64,7 @@
 (defvar pollen-markup-mode-syntax-table
   (let ((table (make-syntax-table text-mode-syntax-table)))
     ;; The opening brace should match the closing brace
+    ;; TODO: This doesn’t seem to work with electric-pair-mode. Why?
     (modify-syntax-entry ?{ "(}")
     (modify-syntax-entry ?} "){")
     ;; '-' is a symbol constituent
@@ -99,6 +79,21 @@
   :abbrev-table pollen-markup-mode-abbrev-table
   :after-hook (font-lock-ensure)
   :keymap pollen-markup-mode-map
-  (setq font-lock-defaults (list pollen-font-lock-keywords nil t)))
+  (setq font-lock-defaults
+	(list
+	 ;; The symbol to use for `font-lock-keywords'.
+	 pollen-font-lock-keywords
+	 ;; Corresponds to `font-lock-keywords-only'. This indicates whether or
+	 ;; not font lock should fontify strings and comments. Strings and
+	 ;; comments are identified via the syntax table, as described in
+	 ;; Info node `(elisp) Syntactic Font Lock'.
+	 ;; We don't care (there are no strings or comments in pollen), so set
+	 ;; it to `t' to disable string/comment fontification.
+	 t
+	 ;; Corresponds to `font-lock-keywords-case-fold-search'. As this is `t'
+	 ;; the regular expression match is case-insensitive. case isn't
+	 ;; important for pollen syntax, so we set it to `t'.
+	 t
+	 )))
 
 (provide 'pollen-markup-mode)
