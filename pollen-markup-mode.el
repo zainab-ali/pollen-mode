@@ -51,14 +51,10 @@
    (--each pollen-abbrevs (pollen--skeleton-abbrev (car it) (cdr it)))))
 
 
-(defvar pollen-markup-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c j") 'pollen-join)
-    (define-key map (kbd "C-c s") 'pollen-split)
-    (define-key map (kbd "C-c c") 'pollen-change-surrounding-tag-name)
-    (define-key map (kbd "C-c d") 'pollen-delete-surrounding-tag)
-    (define-key map (kbd "C-c ]") 'pollen-up-tag)
-    map)
+;; The keymap defines key bindings, as described in Info node `(elisp) Keymaps'.
+;; There are no keybindings by default, but we create a keymap so that users can
+;; add bindings to it themselves.
+(defvar pollen-markup-mode-map (make-sparse-keymap)
   "Keymap for pollen-markup-mode")
 
 ;; Defines the role of each character, as described in
@@ -86,8 +82,16 @@
   "Syntax table for pollen-markup-mode"
   )
 
+;; `autoload' registers the mode, but defers loading the entire file as
+;; described in Info node `(elisp) Autoload'. If a user seldomly writes pollen,
+;; they may not use the mode at all in an Emacs sitting. Loading the code every
+;; time they start Emacs would be slow and pointless. `autoloading' avoids this.
 ;;;###autoload
-(define-derived-mode pollen-markup-mode text-mode "Pollen markup"
+(define-derived-mode
+  pollen-markup-mode
+  ;; Editing pollen is like editing text, so inherit from `text-mode'
+  text-mode
+  "Pollen markup"
   "Major mode for editing pollen markup."
   ;; The syntax table defines the role (the syntax class) of each character. For
   ;; example, it defines what counts as punctuation, what counts as a comment
@@ -97,7 +101,9 @@
   ;; After pollen-markup-mode has been enabled in a buffer, fontify the entire
   ;; buffer
   :after-hook (font-lock-ensure)
+  ;; Define the keybindings
   :keymap pollen-markup-mode-map
+  ;; Before running `font-lock-mode-hook', set the `font-lock-defaults'.
   (setq font-lock-defaults
 	(list
 	 ;; The symbol to use for `font-lock-keywords'.
