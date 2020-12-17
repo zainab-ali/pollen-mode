@@ -61,22 +61,41 @@
     map)
   "Keymap for pollen-markup-mode")
 
+;; Defines the role of each character, as described in
+;; Info node `(elisp) Syntax Tables'.
+;; Pollen tag contents are treated as text, so we can inherit from
+;; `text-mode-syntax-table'.
+;;
+;; Pollen has the following "special" characters:
+;; - The lozenge `?◊' should be treated as punctuation
+;;   This is done by `text-mode-syntax-table', so no entry is added
+;; - The braces `?{' and `?}' should be treated as parentheses.
+;;   This is also done by `text-mode-syntax-table'.
+;; - The dash `?-' may be used in tag names e.g. "◊foo-bar{". This should be a
+;;   symbol constituent to ensure that `foo-bar' is treated as whole word
+;;   instead of two separate words.
+;;   We need to add an entry in the syntax table for this.
 (defvar pollen-markup-mode-syntax-table
   (let ((table (make-syntax-table text-mode-syntax-table)))
-    ;; The opening brace should match the closing brace
-    ;; TODO: This doesn’t seem to work with electric-pair-mode. Why?
-    (modify-syntax-entry ?{ "(}")
-    (modify-syntax-entry ?} "){")
-    ;; '-' is a symbol constituent
+    ;; The dash character `?-' is a symbol constituent. It has no corresponding
+    ;; paired character (as an example, `?{' and `?}' are paired together). It
+    ;; also has nothing to do with comments (pollen has no comments).
+    ;; Thus, it's entry is `"_"'.
     (modify-syntax-entry ?- "_")
     table)
+  "Syntax table for pollen-markup-mode"
   )
 
 ;;;###autoload
 (define-derived-mode pollen-markup-mode text-mode "Pollen markup"
   "Major mode for editing pollen markup."
+  ;; The syntax table defines the role (the syntax class) of each character. For
+  ;; example, it defines what counts as punctuation, what counts as a comment
+  ;; start, and what is treated as a parenthesis.
   :syntax-table pollen-markup-mode-syntax-table
   :abbrev-table pollen-markup-mode-abbrev-table
+  ;; After pollen-markup-mode has been enabled in a buffer, fontify the entire
+  ;; buffer
   :after-hook (font-lock-ensure)
   :keymap pollen-markup-mode-map
   (setq font-lock-defaults
