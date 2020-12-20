@@ -6,6 +6,26 @@ This contains:
  - basic editing commands
  - commands to work with the pollen project server
 
+## Getting started
+
+1 . Check out this repository
+
+2. Add its directory to the load path.
+
+  In your `init.el`, write:
+
+  ```elisp
+  (add-to-list 'load-path "~/pollen-mode/")
+  ```
+
+3. Enable it for all `.pm` files by adding it to the `auto-mode-alist`.
+
+   In your `init.el`, write:
+
+   ```elisp
+   (add-to-list 'auto-mode-alist '("\\.pm\\'" . pollen-markup-mode))
+   ```
+
 ## Editing commands
 
 You can edit pollen markup tags using:
