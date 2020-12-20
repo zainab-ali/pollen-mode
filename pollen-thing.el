@@ -1,7 +1,12 @@
 (require 'rx)
 (require 'dash)
 
-(defconst pollen-lozenge-rx "◊")
+(defconst pollen-lozenge-rx "◊"
+"The Pollen command character regular expression.
+
+See URL `https://docs.racket-lang.org/pollen/pollen-command-syntax.html' for
+details on the Pollen command character."
+  )
 
 (defun forward-pollen-tag (arg)
   "The forward-thing function for tags
@@ -86,10 +91,19 @@ If ARG is negative, this moves the point backward to the beginning of the tag.
 				     'forward-pollen-tag-backwards))))
 
 (defun pollen--look-around (regex-back regex-forward)
+  "If the text around the point matches REGEX-BACK and REGEX-FORWARD,
+return the limits of the match.
+
+The text behind the point is matched with REGEX-BACK. The text in
+front of the point is matched with REGEX-FORWARD. If both matches
+succeed, a pair (cons cell) is returned. The `car' contains the start
+position of the REGEX-BACK match, while the `cdr' contains the end
+position of the REGEX-FORWARD match.  Together, these delimit the
+start and end of the entire matched text."
   (when-let* ((forward (looking-at regex-forward))
-	      (match-end (match-end 0)))
+	      (end (match-end 0)))
     (when-let* ((back (looking-back regex-back))
-		(match-beginning (match-beginning 0)))
-      (cons match-beginning match-end))))
+		(beginning (match-beginning 0)))
+      (cons beginning end))))
 
 (provide 'pollen-thing)
