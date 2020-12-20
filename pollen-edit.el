@@ -1,27 +1,13 @@
 (require 'dash)
 (require 'pollen-tag)
 
-(defun pollen-change-tag-name (next)
-  (interactive "s")
-  (pcase-let ((`(,start . ,end) (bounds-of-thing-at-point 'pollen-tag)))
-    (delete-region start end)
-    (goto-char start)
-    (insert next)))
-
-(defun pollen-surround (start end next)
-  "Surrounds selected region with a pollen tag"
-  (interactive "r\ns")
-  (goto-char end)
-  (push-mark (point))
-  (goto-char start)
-  (insert (format "◊%s{" next))
-  (goto-char (mark))
-  (insert "}")
-  (pop-mark)
-  )
-
 (defun pollen-delete-surrounding-tag ()
-  "Deletes the surrounding tag, keeping the content"
+  "Deletes the surrounding tag, keeping the content
+
+For example, if the point position is `|'
+
+ Before: ◊tag{conten|ts}
+ After : contents"
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
@@ -49,7 +35,16 @@
       )))
 
 (defun pollen-mark-surrounding-content ()
-  "Mark the content of the surrounding tag"
+  "Mark the content of the surrounding tag.
+
+Highlights the region within the tag braces by placing the mark after
+the first brace and the point before the last.
+
+For the tag
+  ◊foo{This is some text}
+the highlighted region would be
+       This is some text
+"
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
@@ -60,6 +55,13 @@
       (signal 'scan-error '("No surrounding tag")))))
 
 (defun pollen-change-surrounding-tag-name (next)
+  "Change the tag name surrounding the content at point.
+
+For example, if the point position is `|' and the name entered is \"bark\"
+
+ Before: ◊tag{conten|ts}
+ After : ◊bark{conten|ts}
+"
   (interactive "s")
   (let ((tag (pollen--tag-surrounding-point))
 	 (start (point)))
@@ -74,7 +76,13 @@
        (signal 'scan-error '("No surrounding tag")))))
 
 (defun pollen-split ()
-  "Splits the content into two tags around the point."
+  "Splits the content into two tags around the point.
+
+For example, if the point position is `|'
+
+ Before: ◊tag{conten|ts}
+ After : ◊tag{conten}\n|◊tag{ts}
+"
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
@@ -105,6 +113,19 @@
 		       'pollen-split))))
 
 (defun pollen-join ()
+  "Join the tag surrounding the point with the next tag.
+
+For example, if the point position is `|'
+
+ Before: `◊tag{ha|s}◊tag{contents} `
+ After : `◊tag{ha|s contents}`
+
+There cannot be any non-whitespace characters between the tags. The
+following tags cannot be joined:
+
+  `◊tag{ha|s} some text between ◊tag{contents}`
+
+"
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
     (if tag
@@ -150,7 +171,13 @@
 		       'pollen-join))))
 
 (defun pollen-up-tag ()
-  "Moves out of the current tag, after the closing brace"
+  "Move the point out of the current tag to after its closing brace.
+
+For example, if the point position is `|'
+
+ Before: `◊foo{This is some conten|ts}`
+ After : `◊foo{This is some contents}|`
+"
   (interactive)
   (let ((tag (pollen--tag-surrounding-point)))
    (if tag
