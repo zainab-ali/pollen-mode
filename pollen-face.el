@@ -1,13 +1,13 @@
 ;;; -*- lexical-binding: t; -*-
-;; Lexical binding is described in Info node `(elisp) Lexical Binding'
+;; Lexical binding is described in `(info "(elisp) Lexical Binding")'
 
 ;; Rx notation is used to construct regular expressions, as described in 
-;; Info node `(elisp) Rx Notation'
+;; `(info "(elisp) Rx Notation")'
 (require 'rx)
 
 
 ;; Configure how pollen syntax is displayed using faces, as described in
-;; Info node `(elisp) Faces'.
+;; `(info "(elisp) Faces")'.
 ;; We don't care about which terminal (cli) the user opened Emacs in, so DISPLAY
 ;; is always `t'.
 ;; Since choosing colours (and other properties) is a tricky design problem, we
@@ -52,7 +52,7 @@
       ;; (matcher highlighters…)
       ;; where each highlighter is of the form
       ;; (subexp facespec override laxmatch)
-      ;; as described in Info node `(elisp) Search-based Fontification'
+      ;; as described in `(info "(elisp) Search-based Fontification")'
       ;;
       ;; We never want to override existing fontification, so OVERRIDE is always
       ;; `nil'.
@@ -60,7 +60,7 @@
       ;; so LAXMATCH is always `t' .
       ;;
       ;; The regular expressions for the matcher are composed using the rx
-      ;; notation as described in Info node `(elisp) Rx Notation'
+      ;; notation as described in `(info "(elisp) Rx Notation")'
 
       ;; Matches the Racket lang line "#lang pollen"
       (,(rx (group "#lang")
