@@ -1,55 +1,10 @@
 ;;; -*- lexical-binding: t; -*-
 ;; Lexical binding is described in Info node `(elisp) Lexical Binding'
 
-(require 'rx)
-
-(require 'skeleton)
 (require 'dash)
 (require 'pollen-server)
 (require 'pollen-edit)
 (require 'pollen-face)
-
-(defvar pollen-abbrevs
-  '(("pp"  . p)
-    ("ph"  . headline2)
-    ("pn"  . note)
-    ("pk"  . keyword)
-    ("pd"  . definition)
-    ("pb"  . buffer)
-    ("pc"  . command)
-    ("pci"  . code-inline)
-    ("pf"  . function)
-    ("pky"  . key)
-    ("pkb"  . keybinding))
-  "Tagnames")
-
-(define-skeleton pollen-skeleton-command
-  "Pollen command"
-  "Tag: "
-  "◊" str "{" _ "}")
-
-(defmacro pollen-skeleton-tag (tag)
-  `(progn
-     (defun ,(intern (concat "pollen-skeleton-command-" tag)) ()
-       (pollen-skeleton-command ,tag)
-       )
-     (put (quote ,(intern (concat "pollen-skeleton-command-" tag)))  'no-self-insert t)
-     )
-  )
-
-(defun pollen--skeleton-abbrev (abbrev tag-name)
-  "Creates an entry for the abbrev table"
-  (let ((command (intern (concat "pollen-skeleton-command-" (symbol-name tag-name)))))
-    (fset command (lambda ()
-		    (pollen-skeleton-command (symbol-name tag-name))))
-    (put command 'no-self-insert t)
-    (list abbrev "" command)))
-
-(define-abbrev-table 'pollen-markup-mode-abbrev-table
-  (cons
-   (list "psc" "" 'pollen-skeleton-command)
-   (--each pollen-abbrevs (pollen--skeleton-abbrev (car it) (cdr it)))))
-
 
 ;; The keymap defines key bindings, as described in Info node `(elisp) Keymaps'.
 ;; There are no keybindings by default, but we create a keymap so that users can
@@ -97,7 +52,6 @@
   ;; example, it defines what counts as punctuation, what counts as a comment
   ;; start, and what is treated as a parenthesis.
   :syntax-table pollen-markup-mode-syntax-table
-  :abbrev-table pollen-markup-mode-abbrev-table
   ;; After pollen-markup-mode has been enabled in a buffer, fontify the entire
   ;; buffer
   :after-hook (font-lock-ensure)
