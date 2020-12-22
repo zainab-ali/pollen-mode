@@ -113,7 +113,7 @@ The DOC is assumed to be pollen markup with a .pm extension. It's url is
 stripped of this extension (e.g. 'foo.bar.pm' becomes 'foo.bar').
 See URL `https://docs.racket-lang.org/pollen/third-tutorial.html' for details on
 pollen markup files."
-  (let ((path-rx (rx (group (1+ anychar)) ".pm" eol))
+  (let* ((path-rx (rx (group (1+ anychar)) ".pm" eol))
 	(match (s-match path-rx doc)))
     (if match (cadr match)
       (pollen--log
