@@ -101,7 +101,7 @@ If there isn't a server running, an attempt is made to start one using
 	     (document (file-relative-name buffer-file-name server-root))
 	     (path (pollen--url-path document)))
 	(browse-url
-	 (concat "localhost:" (number-to-string pollen-server-port) "/" path)))
+	 (concat "http://localhost:" (number-to-string pollen-server-port) "/" path)))
     (pollen--log "Unable to browse the URL.  The pollen server failed to start.")
     (message "Unable to browse URL. Check the *pollen-log* for more details.")
     ))
