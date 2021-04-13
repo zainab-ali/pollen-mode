@@ -121,6 +121,22 @@ pollen markup files."
 	"Unable to extract url for document %s. Is it a pollen markup file?"
 	doc)))))
 
+(defun pollen-clear-cache ()
+  (interactive)
+  (unless
+      (-when-let* ((project-root (pollen--project-root))
+		   (*buffer* (get-buffer-create "*pollen*"))
+		   (default-directory project-root)
+		   (found-raco (pollen--found-raco))
+		   (server-root (pollen--server-root)))
+        (shell-command "raco pollen reset" (pollen--log-buffer) (pollen--log-buffer))
+        (-when-let (process (get-buffer-process *buffer*))
+          (kill-process process)
+          (pollen-start-server)
+          t))
+    (message
+     "Could not clear cache. Check the *pollen-log* for more details.")))
+
 (defun pollen--info.rkt-name ()
   "Extracts the name tag out of info.rkt file.
 
@@ -129,15 +145,15 @@ This is used to specify a sub-directory in which the server is started.
 The 'info.rkt' file is optional, as is it's name tag. This returns nil if the
 file or name tag are missing."
   (-when-let* ((root (pollen--project-root))
-	     (info (concat root "info.rkt"))
-	     (found-info (file-exists-p info))
-	     (name-rx (rx "(define"
-			  (1+ " ")
-			  "name"
-			  (1+ " ")
-			  ?\"
-			  (group (1+ (not (any ?\"))))
-			  ?\")))
+	       (info (concat root "info.rkt"))
+	       (found-info (file-exists-p info))
+	       (name-rx (rx "(define"
+			    (1+ " ")
+			    "name"
+			    (1+ " ")
+			    ?\"
+			    (group (1+ (not (any ?\"))))
+			    ?\")))
     (with-temp-buffer
       (insert-file-contents info)
       (goto-char (point-min))
@@ -145,6 +161,9 @@ file or name tag are missing."
       (let ((name (match-string 1)))
 	(if name name
 	  (pollen-log "Unable to extract name from 'info.rkt' file."))))))
+
+(defun pollen--log-buffer ()
+  (get-buffer-create "*pollen-log*"))
 
 (defun pollen--log (message)
   "Write a message to the *pollen-log* buffer"
