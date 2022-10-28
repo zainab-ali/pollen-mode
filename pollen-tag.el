@@ -1,6 +1,7 @@
 (require 'rx)
 (require 'dash)
 (require 'pollen-thing)
+(require 'ert)
 
 (cl-defstruct pollen--tag
   (name)

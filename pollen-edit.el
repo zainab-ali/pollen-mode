@@ -1,5 +1,6 @@
 (require 'dash)
 (require 'pollen-tag)
+(require 'ert)
 
 (defun pollen-delete-surrounding-tag ()
   "Deletes the surrounding tag, keeping the content

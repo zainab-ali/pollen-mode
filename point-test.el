@@ -1,5 +1,7 @@
 ;; Utils for testing the point
 
+(require 'ert)
+
 ;; Point insertion
 ;; (defun insert-point-start () (interactive) (insert "①"))
 ;; (defun insert-point-end () (interactive) (insert "②"))

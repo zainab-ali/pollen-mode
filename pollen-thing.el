@@ -1,5 +1,6 @@
 (require 'rx)
 (require 'dash)
+(require 'ert)
 
 (defconst pollen-lozenge-rx "◊"
 "The Pollen command character regular expression.
